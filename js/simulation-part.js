@@ -233,13 +233,25 @@ function prepareSimulation() {
 			alert('Please fill all the fields.');
 			return;
 		}
-		if (primaryData.nodeFrom.length < 2 || primaryData.nodeFrom[0] !== 'N' || isNaN(primaryData.nodeFrom.slice(1))) {
+		if (isNaN(primaryData.nodeFrom) && primaryData.nodeFrom[0].toLowerCase() !== 'n'  || primaryData.nodeFrom[0].toLowerCase() == 'n' && isNaN(primaryData.nodeFrom.slice(1))) {
 			alert('Incorrect node name.');
 			return;
+		} else {
+			if (primaryData.nodeFrom[0] === 'n') {
+				primaryData.nodeFrom = primaryData.nodeFrom.replace('n', 'N');
+			} else if (!isNaN(primaryData.nodeFrom)) {
+				primaryData.nodeFrom = 'N' + primaryData.nodeFrom;
+			}
 		}
-		if (primaryData.nodeTo.length < 2 || primaryData.nodeTo[0] !== 'N' || isNaN(primaryData.nodeTo.slice(1))) {
+		if (isNaN(primaryData.nodeTo) && primaryData.nodeTo[0].toLowerCase() !== 'n' || primaryData.nodeTo[0].toLowerCase() == 'n' && isNaN(primaryData.nodeTo.slice(1))) {
 			alert('Incorrect node name.');
 			return;
+		} else {
+			if (primaryData.nodeTo[0] === 'n') {
+				primaryData.nodeTo = primaryData.nodeTo.replace('n', 'N');
+			} else if (!isNaN(primaryData.nodeTo)) {
+				primaryData.nodeTo = 'N' + primaryData.nodeTo;
+			}
 		}
 		if (isNaN(primaryData.messageSize) || primaryData.messageSize <= 0) {
 			alert('Incorrect message size');
