@@ -385,7 +385,7 @@ function logicalSimulate(data, packagesNum) {
 		},
 		{
 			name: "Service data: ",
-			value: 208
+			value: (2 * packagesNum + 4) * 26
 		},
 		{
 			name: "Transfer time: ",
@@ -535,7 +535,7 @@ function datagramSimulate(data, packagesNum) {
 		},
 		{
 			name: "Service data: ",
-			value: 208
+			value: packagesNum * 26
 		},
 		{
 			name: "Transfer time: ",
