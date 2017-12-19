@@ -403,8 +403,10 @@ function logicalSimulate(data, packagesNum) {
 		restPackagesSize = data.messageSize - lastPackageSize;	
 		restPackagesTime = (data.datafieldSize/*розмір одного, а не всіх*/ / 10) * shortest.cost * (packagesNum - 1)/*множу на необхідну кількість*/ + (26/10) * shortest.cost * (packagesNum - 1) * 2;
 		time = lastPackageTime + restPackagesTime;
+		time += ((26 / 10) * shortest.cost) * 4;
 	} else {
 		time = ((data.datafieldSize / 10) * shortest.cost * packagesNum) + ((26 / 10) * shortest.cost) * packagesNum * 2;
+		time += ((26 / 10) * shortest.cost) * 4;
 	}
 
 	result = [
@@ -418,7 +420,7 @@ function logicalSimulate(data, packagesNum) {
 		},
 		{
 			name: "Transfer time: ",
-			value: time
+			value: Math.round(time * 100) / 100
 		},
 		{
 			name: "Informational packages: ",
@@ -590,7 +592,7 @@ function datagramSimulate(data, packagesNum) {
 		},
 		{
 			name: "Transfer time: ",
-			value: time
+			value: Math.round(time * 100) / 100
 		},
 		{
 			name: "Informational packages: ",
