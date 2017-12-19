@@ -315,16 +315,18 @@ function generatePackages(data) {
 		if (i !== packagesNumber - 1) {
 			packages['package' + (i + 1)].size = data.datafieldSize;
 		} else {
-			packages['package' + (i + 1)].size = data.messageSize % data.datafieldSize;
+			if (data.messageSize % data.datafieldSize === 0) {
+				packages['package' + (i + 1)].size = data.datafieldSize;
+			} else {
+				packages['package' + (i + 1)].size = data.messageSize % data.datafieldSize;
+			}
 		}
 
 		packages['package' + (i + 1)].location = {
 			name: "",
 			type: ""
 		}
-		packages['package' + (i + 1)].nodesVisited = {
-			name: ""
-		}
+		packages['package' + (i + 1)].ownWayTime = 0;
 	}
 	generalStructure.packages = [];
 	generalStructure.startingArray = [];
@@ -373,10 +375,13 @@ function generateGeneralStructure(data) {
 		}
 	}
 
+	generalStructure.packages[0].ownWayTime = 3;
 	//Put the first package to the start node
 	generalStructure.packages[0].location.type = 'node';
 	generalStructure.packages[0].location.name = data.nodeFrom;
 	generalStructure[data.nodeFrom].content = generalStructure.packages[0];
+
+	generalStructure.sentPackages = [];
 
 	console.log(generalStructure);
 	console.log(graph);
@@ -387,8 +392,20 @@ function generateGeneralStructure(data) {
 function logicalSimulate(data, packagesNum) {
 	var graphObj = new Graph(graph);
 	var shortest = graphObj.findShortestPath(data.nodeFrom, data.nodeTo);
-	var time = (((2 * packagesNum + 4) * shortest.cost) * data.messageSize) / 10;
+	var time;
 	var result;
+
+	if (data.messageSize % data.datafieldSize !== 0 && data.messageSize > data.datafieldSize) {
+		var lastPackageSize = 0, lastPackageTime = 0, restPackagesSize = 0, restPackagesTime = 0;
+
+		lastPackageSize = data.messageSize % data.datafieldSize;
+		lastPackageTime = (lastPackageSize / 10) * shortest.cost + (26/10) * shortest.cost * 2;
+		restPackagesSize = data.messageSize - lastPackageSize;	
+		restPackagesTime = (data.datafieldSize/*розмір одного, а не всіх*/ / 10) * shortest.cost * (packagesNum - 1)/*множу на необхідну кількість*/ + (26/10) * shortest.cost * (packagesNum - 1) * 2;
+		time = lastPackageTime + restPackagesTime;
+	} else {
+		time = ((data.datafieldSize / 10) * shortest.cost * packagesNum) + ((26 / 10) * shortest.cost) * packagesNum * 2;
+	}
 
 	result = [
 		{	
@@ -436,7 +453,7 @@ function datagramSimulate(data, packagesNum) {
 					//Update package.location property
 					generalStructure.packages[i].location.type = 'node';
 					generalStructure.packages[i].location.name = data.nodeFrom;
-				}
+				} 
 			} else if (generalStructure.packages[i].location.type === 'node') {
 				var node = generalStructure.packages[i].location.name;
 				var shortest = generalStructure[node].shortestPathToTarget();
@@ -508,11 +525,18 @@ function datagramSimulate(data, packagesNum) {
 							if (currentChannel.slice(currentChannel.lastIndexOf('N')) === data.nodeTo) {
 								for (var z = 0; z < generalStructure.packages.length; z++) {
 									if (generalStructure.packages[z].name == generalStructure[currentChannel].timeRow[j].name) {
+										generalTime += 1;
+										if (generalStructure.packages[z].name === 'package1') {
+											generalStructure.packages[z].ownWayTime = generalTime + 1;
+										} else {
+											generalStructure.packages[z].ownWayTime = generalTime;
+										}
+										generalStructure.sentPackages.push(generalStructure.packages[z]);
 										generalStructure.packages.splice(z, 1);
+										i -= 1;
 									}
 								}
 								generalStructure[currentChannel].timeRow[j] = undefined;
-								generalTime += 1;
 							} else {
 								var nextNode = currentChannel.slice(currentChannel.lastIndexOf('N'));
 
@@ -539,7 +563,22 @@ function datagramSimulate(data, packagesNum) {
 		generalTime += 1;
 	}
 
-	var time = (generalTime * data.messageSize) / 10;
+	for (var i = 1; i < generalStructure.sentPackages.length; i++) {
+		generalStructure.sentPackages[i].ownWayTime += 1;
+	}
+
+	var time;
+
+	if (data.messageSize % data.datafieldSize !== 0 && data.messageSize > data.datafieldSize) {
+		var lastPackageTime = generalTime - generalStructure.sentPackages[generalStructure.sentPackages.length - 2].ownWayTime;
+		var packagesWithoutLastTime = generalTime - lastPackageTime;
+		var packagesWithoutLastSize = data.datafieldSize * (generalStructure.sentPackages.length - 1);
+		var lastPackageSize = generalStructure.sentPackages[generalStructure.sentPackages.length - 1].size;
+		time = ((data.datafieldSize/*розмір одного пакету*/ / 10) * packagesWithoutLastTime) + ((lastPackageSize / 10) * lastPackageTime);
+	} else {
+		time = (data.datafieldSize / 10) * generalTime;
+	}
+
 	var result = [
 		{	
 			name: "Informational data: ",
