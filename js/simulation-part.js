@@ -411,15 +411,15 @@ function logicalSimulate(data, packagesNum) {
 
 	result = [
 		{	
-			name: "Informational data: ",
+			name: "Informational data (bytes): ",
 			value: data.messageSize
 		},
 		{
-			name: "Service data: ",
+			name: "Service data (bytes): ",
 			value: (2 * packagesNum + 4) * 26
 		},
 		{
-			name: "Transfer time: ",
+			name: "Transfer time (ms): ",
 			value: Math.round(time * 100) / 100
 		},
 		{
@@ -583,16 +583,16 @@ function datagramSimulate(data, packagesNum) {
 
 	var result = [
 		{	
-			name: "Informational data: ",
+			name: "Informational data (bytes): ",
 			value: data.messageSize
 		},
 		{
-			name: "Service data: ",
+			name: "Service data (bytes): ",
 			value: packagesNum * 26
 		},
 		{
-			name: "Transfer time: ",
-			value: Math.round(time * 100) / 100
+			name: "Transfer time (ms): ",
+			value: (Math.round(time * 100) / 100)
 		},
 		{
 			name: "Informational packages: ",
