@@ -6,7 +6,7 @@
 
 This is my course work from university.
 
-## Using
+## How to use
 
 The main window of this application contains a panel for entering the initial data and network mapping, and also additional panels to display the shortest paths to the nodes for the selected node. You can add a new node by left clicking on display panel, or channel, by left-clicking at first to one node, and then to another. By double-clicking the left mouse button on the node you can
 view its routing table. To get the message sending results from one node to another, you need to click on the Simulate button.
