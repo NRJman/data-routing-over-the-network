@@ -1,4 +1,4 @@
-var channelWeightRange = [3, 5, 6, 7, 8, 10, 11, 15, 18, 21, 22, 23, 25];
+var channelWeightRange = [10]; //[3, 5, 6, 7, 8, 10, 11, 15, 18, 21, 22, 23, 25];
 var graph = {};
 var actionsWindow = document.getElementById('window');
 var firstClick = false;
@@ -207,7 +207,7 @@ function visualizeShortestPath() {
 		$(this).removeClass('highlighted')
 	}
 
-	for (var i = 0; i < shortest.length - 1; i++) {
+	for (var i = 0, shortestLength = shortest.length; i < shortestLength - 1; i++) {
 		linkId = 'from' + shortest[i] + 'to' + shortest[i+1];
 		if (document.getElementById(linkId) === null) {
 			linkId = 'from' + shortest[i+1] + 'to' + shortest[i];
@@ -251,10 +251,10 @@ function visualizeNodeRemoving(nodeToRemove) {
 
 	//Choosing what links to remove:
 	allLinks = document.getElementsByClassName('link');
-	for (var i = 0; i < allLinks.length; i++) {
+	for (var i = 0, allLinksLength = allLinks.length; i < allLinksLength; i++) {
 		linkClasses = allLinks[i].classList;
 
-		for (var j = 0; j < linkClasses.length; j++) {
+		for (var j = 0, linkClassesLength = linkClasses.length; j < linkClassesLength; j++) {
 			if (linkClasses[j].includes(nodeToRemove)) {
 				linksToRemove.push(linkClasses[j]);
 			}
@@ -262,7 +262,7 @@ function visualizeNodeRemoving(nodeToRemove) {
 	}
 
 	//Removing links:
-	for (var i = 0; i < linksToRemove.length; i++) {
+	for (var i = 0, linksToRemoveLength = linksToRemove.length; i < linksToRemoveLength; i++) {
 		$('.' + linksToRemove[i]).remove();
 		linkWeightId = 'weight' + linksToRemove[i].replace(/-/g, '');
 		$('#' + linkWeightId).remove();
@@ -351,8 +351,8 @@ function visualizeLink(e, linkNode, linkTarget, weight) {
 	weightY = (y1 + y2) / 2;
 
 	var links = document.getElementsByClassName('link');
-	for (var i = 0; i < links.length; i++) {
-		for (var j = 0; j < links[i].classList.length; j++) {
+	for (var i = 0, linksLength = links.length; i < linksLength; i++) {
+		for (var j = 0, linksClassListLength = links[i].classList.length; j < linksClassListLength; j++) {
 			if (links[i].classList[j] === classToCheck1 || links[i].classList[j] === classToCheck2)
 				isLinkExists = true;
 		}

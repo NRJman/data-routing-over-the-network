@@ -1,6 +1,6 @@
 var mainButtonClicked = false;
 
-$('#simulate').on('click', function() {
+$('#simulate').on('click', function () {
 	mainButtonClicked = true;
 	prepareSimulation();
 });
@@ -11,22 +11,22 @@ var Graph = (function (undefined) {
 	var extractKeys = function (obj) {
 		var keys = [], key;
 		for (key in obj) {
-		    Object.prototype.hasOwnProperty.call(obj,key) && keys.push(key);
+			Object.prototype.hasOwnProperty.call(obj, key) && keys.push(key);
 		}
 		return keys;
 	}
 
 	var sorter = function (a, b) {
-		return parseFloat (a) - parseFloat (b);
+		return parseFloat(a) - parseFloat(b);
 	}
 
 	var findPaths = function (map, start, end, infinity) {
 		infinity = infinity || Infinity;
 
 		var costs = {},
-		    open = {'0': [start]},
-		    predecessors = {},
-		    keys;
+			open = { '0': [start] },
+			predecessors = {},
+			keys;
 
 		var addToOpen = function (cost, vertex) {
 			var key = "" + cost;
@@ -37,23 +37,23 @@ var Graph = (function (undefined) {
 		costs[start] = 0;
 
 		while (open) {
-			if(!(keys = extractKeys(open)).length) break;
+			if (!(keys = extractKeys(open)).length) break;
 
 			keys.sort(sorter);
 
 			var key = keys[0],
-			    bucket = open[key],
-			    node = bucket.shift(),
-			    currentCost = parseFloat(key),
-			    adjacentNodes = map[node] || {};
+				bucket = open[key],
+				node = bucket.shift(),
+				currentCost = parseFloat(key),
+				adjacentNodes = map[node] || {};
 
 			if (!bucket.length) delete open[key];
 
 			for (var vertex in adjacentNodes) {
-			    if (Object.prototype.hasOwnProperty.call(adjacentNodes, vertex)) {
+				if (Object.prototype.hasOwnProperty.call(adjacentNodes, vertex)) {
 					var cost = adjacentNodes[vertex],
-					    totalCost = cost + currentCost,
-					    vertexCost = costs[vertex];
+						totalCost = cost + currentCost,
+						vertexCost = costs[vertex];
 
 					if ((vertexCost === undefined) || (vertexCost > totalCost)) {
 						costs[vertex] = totalCost;
@@ -75,7 +75,7 @@ var Graph = (function (undefined) {
 
 	var extractShortest = function (predecessors, end) {
 		var nodes = [],
-		    u = end;
+			u = end;
 
 		while (u !== undefined) {
 			nodes.push(u);
@@ -89,10 +89,10 @@ var Graph = (function (undefined) {
 	var findShortestPath = function (map, nodes) {
 		var nodeForSave = nodes[1];
 		var start = nodes.shift(),
-		    end,
-		    predecessors,
-		    path = [],
-		    shortest;
+			end,
+			predecessors,
+			path = [],
+			shortest;
 
 		while (nodes.length) {
 			end = nodes.shift();
@@ -103,7 +103,7 @@ var Graph = (function (undefined) {
 				if (nodes.length) {
 					path.push.apply(path, shortest.slice(0, -1));
 				} else {
-					return {path: path.concat(shortest), cost: realCosts[nodeForSave]};
+					return { path: path.concat(shortest), cost: realCosts[nodeForSave] };
 				}
 			} else {
 				return null;
@@ -155,23 +155,23 @@ var Graph = (function (undefined) {
 
 var generalStructure = {};
 
-$('body').bind('dblclick', function(e) {
-	if (e.target.classList[0] === 'nodeName' || e.target.classList[0] === 'node')
-		renderModal(e);
+$('body').bind('dblclick', function (e) {
+	if (e.target.classList[0] === 'nodeName' || e.target.classList[0] === 'node') renderModal(e);
 });
 
 function renderModal(e) {
 	var graph = JSON.parse(sessionStorage.getItem('graph'));
 	var graphObj = new Graph(graph);
 	var allNodesList = [];
-	var table = document.getElementById('table');
-	var title = document.getElementById('modalTitle');
+	var doc = document;
+	var table = doc.getElementById('table');
+	var title = doc.getElementById('modalTitle');
 	var startNode, i, shortestPath;
-	table.innerHTML = "<tr>" + 
-							"<th>Target</th>" +
-							"<th>Next step to get the target</th>" + 
-							"<th>Summary weight</th>" + 
-						"</tr>";
+	table.innerHTML = "<tr>" +
+		"<th>Target</th>" +
+		"<th>Next step to get the target</th>" +
+		"<th>Summary weight</th>" +
+		"</tr>";
 	title.innerText = '';
 
 	if (e.target.id[0] === 'N') {
@@ -180,21 +180,21 @@ function renderModal(e) {
 		var id = e.target.id;
 		startNode = id.replace('S', 'N');
 	}
-	/*console.log(graphObj.findShortestPath('N1', 'N4'));*/
-	for (i = 0; i < document.getElementsByClassName('node').length; i++) {
-		allNodesList.push(document.getElementsByClassName('node')[i].id)
+
+	for (i = 0, len = doc.getElementsByClassName('node').length; i < len; i++) {
+		allNodesList.push(doc.getElementsByClassName('node')[i].id)
 	}
 
-	for (i = 0; i < allNodesList.length; i++) {
+	for (i = 0, len = allNodesList.length; i < len; i++) {
 		if (allNodesList[i] !== startNode) {
 			shortestPath = graphObj.findShortestPath(startNode, allNodesList[i]);
 			title.innerText = 'Selected node: ' + startNode;
-			table.innerHTML += 
-				"<tr>" 
-			+  		"<td>" + shortestPath.path[shortestPath.path.length - 1] + "</td>" 
-			+  		"<td>" + shortestPath.path[1] + "</td>"
-			+  		"<td>" + shortestPath.cost + "</td>"
-			+ 	"</tr>";
+			table.innerHTML +=
+				"<tr>"
+				+ "<td>" + shortestPath.path[shortestPath.path.length - 1] + "</td>"
+				+ "<td>" + shortestPath.path[1] + "</td>"
+				+ "<td>" + shortestPath.cost + "</td>"
+				+ "</tr>";
 		}
 	}
 
@@ -202,15 +202,19 @@ function renderModal(e) {
 }
 
 function prepareSimulation() {
+	var startDate = new Date(),
+		endDate;
+	var doc = document;
+
 	if (mainButtonClicked) {
 		var primaryData = {};
 
-		primaryData.nodeFrom = document.getElementById('start').value;
-		primaryData.nodeTo = document.getElementById('finish').value;
-		primaryData.logical = document.getElementById('logicalCheckbox').checked;
-		primaryData.datagram = document.getElementById('datagramCheckbox').checked;
-		primaryData.messageSize = document.getElementById('messageSize').value;
-		primaryData.datafieldSize = document.getElementById('fieldSize').value;
+		primaryData.nodeFrom = doc.getElementById('start').value;
+		primaryData.nodeTo = doc.getElementById('finish').value;
+		primaryData.logical = doc.getElementById('logicalCheckbox').checked;
+		primaryData.datagram = doc.getElementById('datagramCheckbox').checked;
+		primaryData.messageSize = doc.getElementById('messageSize').value;
+		primaryData.datafieldSize = doc.getElementById('fieldSize').value;
 
 		if (primaryData.nodeFrom === "") {
 			alert('Please fill all the fields.');
@@ -233,7 +237,7 @@ function prepareSimulation() {
 			alert('Please fill all the fields.');
 			return;
 		}
-		if (isNaN(primaryData.nodeFrom) && primaryData.nodeFrom[0].toLowerCase() !== 'n'  || primaryData.nodeFrom[0].toLowerCase() == 'n' && isNaN(primaryData.nodeFrom.slice(1))) {
+		if (isNaN(primaryData.nodeFrom) && primaryData.nodeFrom[0].toLowerCase() !== 'n' || primaryData.nodeFrom[0].toLowerCase() == 'n' && isNaN(primaryData.nodeFrom.slice(1))) {
 			alert('Incorrect node name.');
 			return;
 		} else {
@@ -269,6 +273,10 @@ function prepareSimulation() {
 		mainButtonClicked = false;
 		startSimulation(primaryData);
 	}
+	
+	endDate = new Date();
+
+	console.log((endDate - startDate) / 1000);
 }
 
 function startSimulation(data) {
@@ -289,17 +297,18 @@ function visualizeShortestPath() {
 	var data = JSON.parse(sessionStorage.getItem('data'));
 	var graphObj = new Graph(graph);
 	var shortest = graphObj.findShortestPath(data.nodeFrom, data.nodeTo).path;
+	var doc = document;
 	var linkId;
 
 	$('.highlighted').removeClass('highlighted');
 
-	for (var i = 0; i < shortest.length - 1; i++) {
-		linkId = 'from' + shortest[i] + 'to' + shortest[i+1];
-		if (document.getElementById(linkId) === null) {
-			linkId = 'from' + shortest[i+1] + 'to' + shortest[i];
-			document.getElementById(linkId).classList.add('highlighted');
+	for (var i = 0, len = shortest.length - 1; i < len; i++) {
+		linkId = 'from' + shortest[i] + 'to' + shortest[i + 1];
+		if (doc.getElementById(linkId) === null) {
+			linkId = 'from' + shortest[i + 1] + 'to' + shortest[i];
+			doc.getElementById(linkId).classList.add('highlighted');
 		} else {
-			document.getElementById(linkId).classList.add('highlighted');
+			doc.getElementById(linkId).classList.add('highlighted');
 		}
 	}
 }
@@ -311,7 +320,7 @@ function generatePackages(data) {
 	for (var i = 0; i < packagesNumber; i++) {
 		packages['package' + (i + 1)] = {};
 		packages['package' + (i + 1)].name = 'package' + (i + 1);
-		
+
 		if (i !== packagesNumber - 1) {
 			packages['package' + (i + 1)].size = data.datafieldSize;
 		} else {
@@ -339,7 +348,7 @@ function generatePackages(data) {
 	}
 
 	//Generate starting array (consists of all packages, but without first one)
-	for (var i = 1; i < generalStructure.packages.length; i++) {
+	for (var i = 1, len = generalStructure.packages.length; i < len; i++) {
 		generalStructure.startingArray.push(generalStructure.packages[i]);
 	}
 }
@@ -348,15 +357,14 @@ function generateGeneralStructure(data) {
 	var channelName;
 	var shortestPathToTarget;
 
-	for (prop in graph) {
-
+	for (var prop in graph) {
 		//Generate nodes objects
 		generalStructure[prop] = {
 			name: prop,
 			type: 'node',
 			content: '',
 			graphCopy: graph,
-			shortestPathToTarget: function() {
+			shortestPathToTarget: function () {
 				var graphObj = new Graph(this.graphCopy);
 				var valueToReturn = graphObj.findShortestPath(this.name, data.nodeTo);
 				this.graphCopy = JSON.parse(sessionStorage.getItem('graph'));
@@ -399,9 +407,9 @@ function logicalSimulate(data, packagesNum) {
 		var lastPackageSize = 0, lastPackageTime = 0, restPackagesSize = 0, restPackagesTime = 0;
 
 		lastPackageSize = data.messageSize % data.datafieldSize;
-		lastPackageTime = (lastPackageSize / 10) * shortest.cost + (26/10) * shortest.cost * 2;
-		restPackagesSize = data.messageSize - lastPackageSize;	
-		restPackagesTime = (data.datafieldSize/*розмір одного, а не всіх*/ / 10) * shortest.cost * (packagesNum - 1)/*множу на необхідну кількість*/ + (26/10) * shortest.cost * (packagesNum - 1) * 2;
+		lastPackageTime = (lastPackageSize / 10) * shortest.cost + (26 / 10) * shortest.cost * 2;
+		restPackagesSize = data.messageSize - lastPackageSize;
+		restPackagesTime = (data.datafieldSize/*розмір одного, а не всіх*/ / 10) * shortest.cost * (packagesNum - 1)/*множу на необхідну кількість*/ + (26 / 10) * shortest.cost * (packagesNum - 1) * 2;
 		time = lastPackageTime + restPackagesTime;
 		time += ((26 / 10) * shortest.cost) * 4;
 	} else {
@@ -410,7 +418,7 @@ function logicalSimulate(data, packagesNum) {
 	}
 
 	result = [
-		{	
+		{
 			name: "Informational data (bytes): ",
 			value: data.messageSize
 		},
@@ -436,26 +444,29 @@ function logicalSimulate(data, packagesNum) {
 }
 
 function datagramSimulate(data, packagesNum) {
-	var generalTime = -1;
+	var generalTime = -1,
+		packagesLength = generalStructure.packages.length;
+
 	//Location types: start, node, channel
 
-	while (generalStructure.packages.length > 0) {
-		for (var i = 0; i < generalStructure.packages.length; i++) {
+	while (packagesLength > 0) {
+		for (var i = 0; i < packagesLength; i++) {
 			if (generalStructure.packages[i].location.type === 'start') {
 				//Check if first node is free
 				if (generalStructure[data.nodeFrom].content === "") {
 					//Move package to the first node
 					generalStructure[data.nodeFrom].content = generalStructure.packages[i];
 					//Find this package in a startingArray and remove it from there
-					for (var j = 0; j < generalStructure.startingArray.length; j++) {
+					for (var j = 0, startArrLen = generalStructure.startingArray.length; j < startArrLen; j++) {
 						if (generalStructure.startingArray[j].name === generalStructure.packages[i].name) {
-							generalStructure.startingArray.splice(j, 1)
+							generalStructure.startingArray.splice(j, 1);
+							startArrLen = generalStructure.startingArray.length;
 						}
 					}
 					//Update package.location property
 					generalStructure.packages[i].location.type = 'node';
 					generalStructure.packages[i].location.name = data.nodeFrom;
-				} 
+				}
 			} else if (generalStructure.packages[i].location.type === 'node') {
 				var node = generalStructure.packages[i].location.name;
 				var shortest = generalStructure[node].shortestPathToTarget();
@@ -466,31 +477,31 @@ function datagramSimulate(data, packagesNum) {
 					var numOfGraphsAheadOfCurrent = 0;
 
 					//Loop the shortest path:
-					for (var j = 0; j < shortest.path.length; j++) {
+					for (var j = 0, shortestPathLenth = shortest.path.length; j < shortestPathLenth; j++) {
 						var nodeToChangeGraph = shortest.path[j];
-						if (j !== shortest.path.length - 1) {
-							var currentChannel = generalStructure[shortest.path[j] + shortest.path[j+1]];
+						if (j !== shortestPathLenth - 1) {
+							var currentChannel = generalStructure[shortest.path[j] + shortest.path[j + 1]];
 							var timeToAdd = 0;
 
 							//Loop the channel:
-							for (var k = 0; k < currentChannel.timeRow.length; k++) {
+							for (var k = 0, timeRowLength = currentChannel.timeRow.length; k < timeRowLength; k++) {
 								if (currentChannel.timeRow[k] !== undefined && currentChannel.timeRow[k] !== undefined) {
 									//Time of met package in channel to finish moving in this channel
-									timeToAdd = currentChannel.timeRow.length - k;
+									timeToAdd = timeRowLength - k;
 
 									if (numOfGraphsAheadOfCurrent !== 0) {
-										timeToAdd += currentChannel.timeRow.length * numOfGraphsAheadOfCurrent;
+										timeToAdd += timeRowLength * numOfGraphsAheadOfCurrent;
 									}
 
 									numOfGraphsAheadOfCurrent += 1;
 								}
 							}
 							//Update channel weight in a shortest path (given the fact that there can be packages)
-							generalStructure[nodeToChangeGraph]["graphCopy"][shortest.path[j]][shortest.path[j+1]] += timeToAdd;
+							generalStructure[nodeToChangeGraph]["graphCopy"][shortest.path[j]][shortest.path[j + 1]] += timeToAdd;
 						}
 					}
 					//Recheck the shortest path (given the fact that we updated channels weights)
-					if (JSON.stringify(shortest) === JSON.stringify(generalStructure[node].shortestPathToTarget())){
+					if (JSON.stringify(shortest) === JSON.stringify(generalStructure[node].shortestPathToTarget())) {
 						break;
 					} else {
 						shortest = generalStructure[node].shortestPathToTarget();
@@ -501,7 +512,7 @@ function datagramSimulate(data, packagesNum) {
 				var nextStepInPath = generalStructure[nameOfNextStepInPath];
 				var isChannelFree = true;
 
-				for (var p = 0; p < generalStructure[nameOfNextStepInPath].timeRow.length; p++) {
+				for (var p = 0, timeRowLength = generalStructure[nameOfNextStepInPath].timeRow.length; p < timeRowLength; p++) {
 					if (generalStructure[nameOfNextStepInPath].timeRow[p] !== undefined && generalStructure[nameOfNextStepInPath].timeRow[p] !== "") {
 						isChannelFree = false;
 						break;
@@ -517,15 +528,15 @@ function datagramSimulate(data, packagesNum) {
 			} else if (generalStructure.packages[i].location.type === 'channel') {
 				var currentChannel = generalStructure.packages[i].location.name;
 
-				for (var j = 0; j < generalStructure[currentChannel].timeRow.length; j++) {
+				for (var j = 0, timeRowLength = generalStructure[currentChannel].timeRow.length; j < timeRowLength; j++) {
 					if (generalStructure[currentChannel].timeRow[j] !== undefined && generalStructure[currentChannel].timeRow[j] !== "") {
-						if (j !== generalStructure[currentChannel].timeRow.length - 1) {
+						if (j !== timeRowLength - 1) {
 							generalStructure[currentChannel].timeRow[j + 1] = generalStructure[currentChannel].timeRow[j];
 							generalStructure[currentChannel].timeRow[j] = undefined;
 							j += 1;
 						} else {
 							if (currentChannel.slice(currentChannel.lastIndexOf('N')) === data.nodeTo) {
-								for (var z = 0; z < generalStructure.packages.length; z++) {
+								for (var z = 0; z < packagesLength; z++) {
 									if (generalStructure.packages[z].name == generalStructure[currentChannel].timeRow[j].name) {
 										generalTime += 1;
 										if (generalStructure.packages[z].name === 'package1') {
@@ -537,6 +548,8 @@ function datagramSimulate(data, packagesNum) {
 										generalStructure.packages.splice(z, 1);
 										i -= 1;
 									}
+
+									packagesLength = generalStructure.packages.length;
 								}
 								generalStructure[currentChannel].timeRow[j] = undefined;
 							} else {
@@ -554,7 +567,7 @@ function datagramSimulate(data, packagesNum) {
 		}
 
 		var storageGraph = JSON.parse(sessionStorage.getItem('graph'));
-		for (var i = 0; i < Object.keys(storageGraph).length; i++) {
+		for (var i = 0, storageGraphLength = Object.keys(storageGraph).length; i < storageGraphLength; i++) {
 			if (generalStructure['N' + (i + 1)] !== undefined) {
 				generalStructure['N' + (i + 1)].graphCopy = storageGraph;
 			} else {
@@ -565,24 +578,26 @@ function datagramSimulate(data, packagesNum) {
 		generalTime += 1;
 	}
 
-	for (var i = 1; i < generalStructure.sentPackages.length; i++) {
+	var sentPackagesLength = generalStructure.sentPackages.length;
+
+	for (var i = 1; i < sentPackagesLength; i++) {
 		generalStructure.sentPackages[i].ownWayTime += 1;
 	}
 
 	var time;
 
 	if (data.messageSize % data.datafieldSize !== 0 && data.messageSize > data.datafieldSize) {
-		var lastPackageTime = generalTime - generalStructure.sentPackages[generalStructure.sentPackages.length - 2].ownWayTime;
+		var lastPackageTime = generalTime - generalStructure.sentPackages[sentPackagesLength - 2].ownWayTime;
 		var packagesWithoutLastTime = generalTime - lastPackageTime;
-		var packagesWithoutLastSize = data.datafieldSize * (generalStructure.sentPackages.length - 1);
-		var lastPackageSize = generalStructure.sentPackages[generalStructure.sentPackages.length - 1].size;
+		var packagesWithoutLastSize = data.datafieldSize * (sentPackagesLength - 1);
+		var lastPackageSize = generalStructure.sentPackages[sentPackagesLength - 1].size;
 		time = ((data.datafieldSize/*розмір одного пакету*/ / 10) * packagesWithoutLastTime) + ((lastPackageSize / 10) * lastPackageTime);
 	} else {
 		time = (data.datafieldSize / 10) * generalTime;
 	}
 
 	var result = [
-		{	
+		{
 			name: "Informational data (bytes): ",
 			value: data.messageSize
 		},
@@ -603,13 +618,14 @@ function datagramSimulate(data, packagesNum) {
 }
 
 function showResult(result, title) {
-	var modalTitle = document.getElementById('simulationModalTitle');
-	var list = document.getElementById('simulationResult');
+	var doc = document;
+	var modalTitle = doc.getElementById('simulationModalTitle');
+	var list = doc.getElementById('simulationResult');
 
 	list.innerHTML = "";
 	modalTitle.innerText = title;
 
-	for (var i = 0; i < result.length; i++) {
+	for (var i = 0, resultLength = result.length; i < resultLength; i++) {
 		list.innerHTML += "<li class='list-group-item'><b>" + result[i].name + "</b> &nbsp;" + result[i].value + "</li>";
 	}
 
